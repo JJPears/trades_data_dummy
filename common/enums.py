@@ -6,6 +6,17 @@ class AssetClass(StrEnum):
     RATES = "RATES"
 
 
+class ProductType(StrEnum):
+    # FX
+    FX_SPOT = "FX_SPOT"
+    FX_FORWARD = "FX_FORWARD"
+    FX_OPTION = "FX_OPTION"
+
+    # Rates
+    IR_SWAP = "IR_SWAP"
+    BOND_FIXED = "BOND_FIXED"
+
+
 class Direction(StrEnum):
     BUY = "BUY"
     SELL = "SELL"
@@ -34,18 +45,6 @@ class CouponFrequency(StrEnum):
     MONTHLY = "MONTHLY"
 
 
-class ProductType(StrEnum):
-    # FX
-    FX_SPOT = "FX_SPOT"
-    FX_FORWARD = "FX_FORWARD"
-    FX_OPTION = "FX_OPTION"
-
-    # Rates
-    IR_SWAP = "IR_SWAP"
-    BOND_FIXED = "BOND_FIXED"
-
-
-# Not currently used, instead strings used
 class Ccy(StrEnum):
     GBP = "GBP"
     EUR = "EUR"

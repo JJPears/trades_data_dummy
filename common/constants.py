@@ -1,3 +1,22 @@
 ISSUERS = ["GS", "JPM", "MS", "BARC", "CITI"]
-NOTIONAL_MAX = 1e5
-NOTIONAL_MIN = 1e7
+FLOAT_INDEXES = ["SOFR", "EURIBOR3M", "SONIA", "TONA", "SARON"]
+FX_PAIRS = [
+    "EUR/USD",
+    "EUR/JPY",
+    "EUR/GBP",
+    "USD/EUR",
+    "USD/JPY",
+    "USD/GBP",
+    "JPY/EUR",
+    "JPY/USD",
+    "JPY/GBP",
+    "GBP/EUR",
+    "GBP/USD",
+    "GBP/JPY",
+]
+NOTIONAL_MIN = 1e5
+NOTIONAL_MAX = 1e7
+RATE_MIN = 0.01
+RATE_MAX = 0.08
+STRIKE_MIN = 30
+STRIKE_MAX = 60

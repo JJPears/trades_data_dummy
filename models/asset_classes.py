@@ -18,7 +18,6 @@ class Trade(BaseModel):
     asset_class: AssetClass
     product_type: ProductType
     notional: float
-    currency: Ccy
 
 
 # Rates
@@ -29,6 +28,7 @@ class BulletBond(Trade):
     issue_date: datetime
     maturity_date: datetime
     day_count: DayCount
+    currency: Ccy
     # potentially add rating and credit spread
 
 
@@ -41,6 +41,7 @@ class IRSwap(Trade):
     floating_leg_freq: CouponFrequency
     day_count_fixed: DayCount
     day_count_floating: DayCount
+    currency: Ccy
 
 
 # FX
@@ -50,9 +51,7 @@ class FXOption(Trade):
     option_type: OptionType
     strike: float
     expiry_date: datetime
-    domestic_ccy: Ccy
-    foreign_ccy: Ccy
-    pay_receive_fixe: PayReceive
+    pay_receive_fixed: PayReceive
 
 
 class FXSpot(Trade):
