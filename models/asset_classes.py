@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from enums import AssetClass, ProductType, CouponFrequency, DayCount, Direction, OptionType, PayReceive
+from common.enums import AssetClass, ProductType, CouponFrequency, DayCount, Direction, OptionType, PayReceive, Ccy
 
 
 
@@ -11,7 +11,7 @@ class Trade(BaseModel):
     asset_class: AssetClass
     product_type: ProductType
     notional: float
-    currency: str
+    currency: Ccy
 
 # Rates
 class BulletBond(Trade):
@@ -42,8 +42,8 @@ class FXOption(Trade):
     option_type: OptionType
     strike: float
     expiry_date: datetime
-    domestic_ccy: str
-    foreign_ccy: str
+    domestic_ccy: Ccy
+    foreign_ccy: Ccy
     pay_receive_fixe: PayReceive
 
 class FXSpot(Trade):
