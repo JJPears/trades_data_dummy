@@ -32,11 +32,12 @@ from trade_service import create_trades
 
 # Generate 100 random trades across all asset classes as a `TradeCollection` object
 trades = create_trades(n=100)
-
+```
 ### 2. Call to_csv method from trades_collection object
 
+```python
 trades.to_csv("path/to/csv.csv")
-
+```
 ---
 
 ## Features
