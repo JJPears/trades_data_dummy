@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from common.enums import (
+from src.common.enums import (
     AssetClass,
     ProductType,
     CouponFrequency,

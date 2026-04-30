@@ -1,5 +1,5 @@
-from models.asset_classes import BulletBond, IRSwap, FXOption, FXSpot
-from common.utils import (
+from src.models.asset_classes import BulletBond, IRSwap, FXOption, FXSpot
+from src.common.utils import (
     generate_trade_id,
     generate_date,
     generate_notional,
@@ -15,7 +15,7 @@ from common.utils import (
     generate_strike,
     generate_pay_receive
 )
-from common.enums import AssetClass, ProductType
+from src.common.enums import AssetClass, ProductType
 
 
 def create_bullet_bond_trade() -> BulletBond:

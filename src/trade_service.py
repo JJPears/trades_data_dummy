@@ -1,6 +1,6 @@
-from common.enums import ProductType
-from models.trade_collection import TradeCollection
-from factories.trade_factory import (
+from src.common.enums import ProductType
+from src.models.trade_collection import TradeCollection
+from src.factories.trade_factory import (
     create_bullet_bond_trade,
     create_ir_swap_trade,
     create_fx_option_trade,
