@@ -1,11 +1,14 @@
 from datetime import datetime, timedelta
+import random
 
 from src.common.enums import ProductType
 from src.models.trade_collection import TradeCollection
-from src import trade_service
+from src.trade_service import TradeService
 from tests.utils import DummyTrade
 
 def test_create_trades_returns_sorted_trade_collection(monkeypatch):
+    service = TradeService()
+
     base_date = datetime(2024, 1, 1)
     trade_dates = [
         base_date,
@@ -18,43 +21,58 @@ def test_create_trades_returns_sorted_trade_collection(monkeypatch):
         ProductType.FX_OPTION,
     ]
 
-    factory_map = {
-        product_type: (lambda pt=product_type, td=trade_dates[i]: DummyTrade(product_type=pt, trade_date=td))
-        for i, product_type in enumerate(selected_types)
-    }
-    monkeypatch.setattr(trade_service, "FACTORY_MAP", factory_map)
+    monkeypatch.setattr(
+        "your_module.create_bullet_bond_trade",
+        lambda: DummyTrade(product_type=ProductType.BOND_FIXED, trade_date=trade_dates[0]),
+    )
+    monkeypatch.setattr(
+        "your_module.create_ir_swap_trade",
+        lambda: DummyTrade(product_type=ProductType.IR_SWAP, trade_date=trade_dates[1]),
+    )
+    monkeypatch.setattr(
+        "your_module.create_fx_option_trade",
+        lambda: DummyTrade(product_type=ProductType.FX_OPTION, trade_date=trade_dates[2]),
+    )
 
     sequence = iter(selected_types)
-    monkeypatch.setattr(trade_service.random, "choice", lambda options: next(sequence))
+    monkeypatch.setattr(random, "choice", lambda _: next(sequence))
 
-    trades = trade_service.create_trades(n=3)
+    trades = service.create_trades(n=3, product_types=selected_types)
 
     assert isinstance(trades, TradeCollection)
-    assert [trade.trade_date for trade in trades] == sorted(
-        [trade.trade_date for trade in trades], reverse=True
+    assert [t.trade_date for t in trades] == sorted(
+        [t.trade_date for t in trades], reverse=True
     )
 
 
 def test_create_trades_respects_product_types_argument(monkeypatch):
-    base_date = datetime(2024, 1, 1)
-    monkeypatch.setattr(
-        trade_service,
-        "FACTORY_MAP",
-        {
-            ProductType.FX_SPOT: lambda: DummyTrade(product_type=ProductType.FX_SPOT, trade_date=base_date)
-        },
-    )
-    monkeypatch.setattr(trade_service.random, "choice", lambda options: ProductType.FX_SPOT)
+    service = TradeService()
 
-    trades = trade_service.create_trades(
-        n=2, product_types=[ProductType.FX_SPOT], sort=False
+    base_date = datetime(2024, 1, 1)
+
+    monkeypatch.setattr(
+        "your_module.create_fx_spot_trade",
+        lambda: DummyTrade(
+            product_type=ProductType.FX_SPOT,
+            trade_date=base_date,
+        ),
+    )
+
+    monkeypatch.setattr(random, "choice", lambda _: ProductType.FX_SPOT)
+
+    trades = service.create_trades(
+        n=2,
+        product_types=[ProductType.FX_SPOT],
+        sort=False,
     )
 
     assert len(trades) == 2
-    assert all(trade.product_type == ProductType.FX_SPOT for trade in trades)
+    assert all(t.product_type == ProductType.FX_SPOT for t in trades)
 
 
 def test_create_trades_with_sort_false_preserves_creation_order(monkeypatch):
+    service = TradeService()
+
     base_date = datetime(2024, 1, 1)
     trade_dates = [
         base_date,
@@ -67,16 +85,27 @@ def test_create_trades_with_sort_false_preserves_creation_order(monkeypatch):
         ProductType.IR_SWAP,
     ]
 
-    factory_map = {
-        product_type: (lambda pt=product_type, td=trade_dates[i]: DummyTrade(product_type=pt, trade_date=td))
-        for i, product_type in enumerate(selected_types)
-    }
-    monkeypatch.setattr(trade_service, "FACTORY_MAP", factory_map)
+    monkeypatch.setattr(
+        "your_module.create_fx_option_trade",
+        lambda: DummyTrade(product_type=ProductType.FX_OPTION, trade_date=trade_dates[0]),
+    )
+    monkeypatch.setattr(
+        "your_module.create_fx_spot_trade",
+        lambda: DummyTrade(product_type=ProductType.FX_SPOT, trade_date=trade_dates[1]),
+    )
+    monkeypatch.setattr(
+        "your_module.create_ir_swap_trade",
+        lambda: DummyTrade(product_type=ProductType.IR_SWAP, trade_date=trade_dates[2]),
+    )
 
     sequence = iter(selected_types)
-    monkeypatch.setattr(trade_service.random, "choice", lambda options: next(sequence))
+    monkeypatch.setattr(random, "choice", lambda _: next(sequence))
 
-    trades = trade_service.create_trades(n=3, sort=False)
+    trades = service.create_trades(
+        n=3,
+        product_types=selected_types,
+        sort=False,
+    )
 
-    assert [trade.product_type for trade in trades] == selected_types
-    assert [trade.trade_date for trade in trades] == trade_dates
+    assert [t.product_type for t in trades] == selected_types
+    assert [t.trade_date for t in trades] == trade_dates
