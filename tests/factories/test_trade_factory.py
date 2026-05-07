@@ -9,6 +9,7 @@ from src.common.enums import (
     OptionType,
     PayReceive,
     ProductType,
+    Ccy,
 )
 from src.factories.trade_factory import (
     create_bullet_bond_trade,
@@ -56,7 +57,8 @@ def test_create_fx_option_trade_returns_fxoption():
     assert len(trade.trade_id) == 12
     assert trade.direction in Direction
     assert trade.option_type in OptionType
-    assert trade.ccy_pair in FX_PAIRS
+    assert trade.underlying in FX_PAIRS
+    assert trade.notional_ccy in Ccy
     assert trade.pay_receive_fixed in PayReceive
     assert trade.trade_date <= trade.expiry_date
 

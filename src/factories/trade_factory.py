@@ -13,9 +13,9 @@ from src.common.utils import (
     generate_direction,
     generate_option_type,
     generate_strike,
-    generate_pay_receive
+    generate_pay_receive,
 )
-from src.common.enums import AssetClass, ProductType
+from src.common.enums import AssetClass, ProductType, Ccy
 
 
 def create_bullet_bond_trade() -> BulletBond:
@@ -73,6 +73,8 @@ def create_fx_option_trade() -> FXOption:
     trade_date = generate_date()
     expiry_date = generate_date(start_date=trade_date)
 
+    underlying = generate_ccy_pair()
+    notional_ccy = underlying.split("/")[-1]
     fx_option_data = {
         "trade_id": generate_trade_id(),
         "trade_date": trade_date,
@@ -83,7 +85,8 @@ def create_fx_option_trade() -> FXOption:
         "option_type": generate_option_type(),
         "strike": generate_strike(),
         "expiry_date": expiry_date,
-        "ccy_pair": generate_ccy_pair(),
+        "underlying": underlying,
+        "notional_ccy": Ccy[notional_ccy],
         "pay_receive_fixed": generate_pay_receive(),
     }
 

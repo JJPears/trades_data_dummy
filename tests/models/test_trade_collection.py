@@ -43,7 +43,7 @@ def test_to_csv_writes_expected_csv_file(tmp_path):
         ]
     )
 
-    file_path = tmp_path / "trades.csv"
+    file_path = str(tmp_path / "trades.csv")
     trades.to_csv(file_path)
 
     result = pd.read_csv(file_path)

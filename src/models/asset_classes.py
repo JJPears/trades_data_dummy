@@ -46,7 +46,8 @@ class IRSwap(Trade):
 
 # FX
 class FXOption(Trade):
-    ccy_pair: str
+    underlying: str
+    notional_ccy: Ccy
     direction: Direction
     option_type: OptionType
     strike: float

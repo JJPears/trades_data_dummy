@@ -9,7 +9,6 @@ class AssetClass(StrEnum):
 class ProductType(StrEnum):
     # FX
     FX_SPOT = "FX_SPOT"
-    FX_FORWARD = "FX_FORWARD"
     FX_OPTION = "FX_OPTION"
 
     # Rates
