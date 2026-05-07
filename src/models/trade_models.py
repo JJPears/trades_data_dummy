@@ -1,5 +1,8 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Any
+import pandas as pd
+from src.common.utils import validate_csv_file_path
 from src.common.enums import (
     AssetClass,
     ProductType,
@@ -21,7 +24,7 @@ class Trade(BaseModel):
 
 
 # Rates
-class BulletBond(Trade):
+class BulletBondTrade(Trade):
     issuer: str
     coupon_rate: float
     coupon_freq: CouponFrequency
@@ -32,7 +35,7 @@ class BulletBond(Trade):
     # potentially add rating and credit spread
 
 
-class IRSwap(Trade):
+class IRSwapTrade(Trade):
     fixed_rate: float
     float_index: str
     start_date: datetime
@@ -45,7 +48,7 @@ class IRSwap(Trade):
 
 
 # FX
-class FXOption(Trade):
+class FXOptionTrade(Trade):
     underlying: str
     notional_ccy: Ccy
     direction: Direction
@@ -55,7 +58,24 @@ class FXOption(Trade):
     pay_receive_fixed: PayReceive
 
 
-class FXSpot(Trade):
+class FXTrade(Trade):
     ccy_pair: str
     direction: Direction
     value_date: datetime
+
+
+
+class TradeCollection(list):
+    def to_df(self) -> pd.DataFrame:
+        rows = [t.model_dump() for t in self]
+        return pd.DataFrame(rows)
+
+    def to_dicts(self) -> list[dict[str, Any]]:
+        return [t.model_dump() for t in self]
+
+    def to_csv(self, file_path):
+        
+        validate_csv_file_path(file_path)
+
+        df = self.to_df()
+        df.to_csv(file_path, index=False)

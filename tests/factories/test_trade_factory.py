@@ -17,13 +17,13 @@ from src.factories.trade_factory import (
     create_fx_spot_trade,
     create_ir_swap_trade,
 )
-from src.models.asset_classes import BulletBond, FXOption, FXSpot, IRSwap
+from src.models.trade_models import BulletBondTrade, FXOptionTrade, FXTrade, IRSwapTrade
 
 
 def test_create_bullet_bond_trade_returns_bulletbond():
     trade = create_bullet_bond_trade()
 
-    assert isinstance(trade, BulletBond)
+    assert isinstance(trade, BulletBondTrade)
     assert trade.asset_class == AssetClass.RATES
     assert trade.product_type == ProductType.BOND_FIXED
     assert len(trade.trade_id) == 12
@@ -36,7 +36,7 @@ def test_create_bullet_bond_trade_returns_bulletbond():
 def test_create_ir_swap_trade_returns_irswap():
     trade = create_ir_swap_trade()
 
-    assert isinstance(trade, IRSwap)
+    assert isinstance(trade, IRSwapTrade)
     assert trade.asset_class == AssetClass.RATES
     assert trade.product_type == ProductType.IR_SWAP
     assert len(trade.trade_id) == 12
@@ -51,7 +51,7 @@ def test_create_ir_swap_trade_returns_irswap():
 def test_create_fx_option_trade_returns_fxoption():
     trade = create_fx_option_trade()
 
-    assert isinstance(trade, FXOption)
+    assert isinstance(trade, FXOptionTrade)
     assert trade.asset_class == AssetClass.FX
     assert trade.product_type == ProductType.FX_OPTION
     assert len(trade.trade_id) == 12
@@ -66,7 +66,7 @@ def test_create_fx_option_trade_returns_fxoption():
 def test_create_fx_spot_trade_returns_fxspot():
     trade = create_fx_spot_trade()
 
-    assert isinstance(trade, FXSpot)
+    assert isinstance(trade, FXTrade)
     assert trade.asset_class == AssetClass.FX
     assert trade.product_type == ProductType.FX_SPOT
     assert len(trade.trade_id) == 12

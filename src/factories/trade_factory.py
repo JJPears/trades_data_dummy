@@ -1,4 +1,9 @@
-from src.models.asset_classes import BulletBond, IRSwap, FXOption, FXSpot
+from src.models.trade_models import (
+    BulletBondTrade,
+    IRSwapTrade,
+    FXOptionTrade,
+    FXTrade,
+)
 from src.common.utils import (
     generate_trade_id,
     generate_date,
@@ -18,7 +23,7 @@ from src.common.utils import (
 from src.common.enums import AssetClass, ProductType, Ccy
 
 
-def create_bullet_bond_trade() -> BulletBond:
+def create_bullet_bond_trade() -> BulletBondTrade:
     # This is not a realistic life cycle for our bond and there will be bias due to
     # maturity date being dependent on trade date
 
@@ -41,10 +46,10 @@ def create_bullet_bond_trade() -> BulletBond:
         "day_count": generate_day_count(),
     }
 
-    return BulletBond(**bond_data)
+    return BulletBondTrade(**bond_data)
 
 
-def create_ir_swap_trade() -> IRSwap:
+def create_ir_swap_trade() -> IRSwapTrade:
 
     start_date = generate_date()
     maturity_date = generate_date(start_date=start_date)
@@ -66,10 +71,10 @@ def create_ir_swap_trade() -> IRSwap:
         "day_count_floating": generate_day_count(),
     }
 
-    return IRSwap(**swap_data)
+    return IRSwapTrade(**swap_data)
 
 
-def create_fx_option_trade() -> FXOption:
+def create_fx_option_trade() -> FXOptionTrade:
     trade_date = generate_date()
     expiry_date = generate_date(start_date=trade_date)
 
@@ -90,10 +95,10 @@ def create_fx_option_trade() -> FXOption:
         "pay_receive_fixed": generate_pay_receive(),
     }
 
-    return FXOption(**fx_option_data)
+    return FXOptionTrade(**fx_option_data)
 
 
-def create_fx_spot_trade() -> FXSpot:
+def create_fx_spot_trade() -> FXTrade:
 
     fx_spot_data = {
         "trade_id": generate_trade_id(),
@@ -106,4 +111,4 @@ def create_fx_spot_trade() -> FXSpot:
         "value_date": generate_date(),
     }
 
-    return FXSpot(**fx_spot_data)
+    return FXTrade(**fx_spot_data)
