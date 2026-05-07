@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import random
 
 from src.common.enums import ProductType
-from src.models.trade_collection import TradeCollection
+from src.models.trade_models import TradeCollection
 from src.trade_service import TradeService
 from tests.utils import DummyTrade
 

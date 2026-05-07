@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.models.trade_collection import TradeCollection
+from src.models.trade_models import TradeCollection
 from tests.utils import DummyTrade
 
 
