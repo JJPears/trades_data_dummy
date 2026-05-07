@@ -91,7 +91,7 @@ def generate_pay_receive() -> PayReceive:
 
 
 def validate_csv_file_path(file_path) -> None:
-    if not isinstance(str, file_path):
+    if not isinstance(file_path, str):
         raise ValueError("file_path must be a string")
 
     if not file_path.lower().endswith(".csv"):
