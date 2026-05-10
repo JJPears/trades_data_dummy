@@ -15,7 +15,7 @@ from src.models.market_data_models import (
 def test_fxspot_valid():
     spot = FXSpot(
         valuation_date=datetime(2025, 1, 1),
-        pair="EURUSD",
+        ccy_pair="EUR/USD",
         spot=1.10,
     )
 
@@ -27,8 +27,18 @@ def test_fxspot_invalid_spot(invalid_spot):
     with pytest.raises(ValidationError, match="Spot rate must be positive"):
         FXSpot(
             valuation_date=datetime(2025, 1, 1),
-            pair="EURUSD",
+            ccy_pair="EUR/USD",
             spot=invalid_spot,
+        )
+
+
+@pytest.mark.parametrize("invalid_ccy_pair", ["USDEUR", "foo", "USD/BRZ"])
+def test_fxspot_invalid_ccy_pair(invalid_ccy_pair):
+    with pytest.raises(ValidationError, match="FX pair not supported"):
+        FXSpot(
+            valuation_date=datetime(2025, 1, 1),
+            ccy_pair=invalid_ccy_pair,
+            spot=1.10,
         )
 
 
@@ -44,7 +54,9 @@ def test_yield_curve_valid():
 
 
 def test_yield_curve_rejects_deeply_negative_rates():
-    with pytest.raises(ValidationError, match="Rates cannot be deeply negative"):
+    with pytest.raises(
+        ValidationError, match="Rates cannot be deeply negative"
+    ):
         YieldCurve(
             valuation_date=datetime(2025, 1, 1),
             currency=Ccy.USD,
@@ -54,7 +66,9 @@ def test_yield_curve_rejects_deeply_negative_rates():
 
 
 def test_yield_curve_rejects_non_decimal_rates():
-    with pytest.raises(ValidationError, match="Rates must be expressed as decimals"):
+    with pytest.raises(
+        ValidationError, match="Rates must be expressed as decimals"
+    ):
         YieldCurve(
             valuation_date=datetime(2025, 1, 1),
             currency=Ccy.USD,
@@ -105,7 +119,7 @@ def test_yield_curve_get_rate_exact_match():
 def test_fx_vol_surface_valid():
     surface = FXVolSurface(
         valuation_date=datetime(2025, 1, 1),
-        pair="EURUSD",
+        ccy_pair="EUR/USD",
         tenors=["1Y", "2Y"],
         strikes=[1.0, 1.1],
         vols=[
@@ -121,7 +135,7 @@ def test_fx_vol_surface_rejects_non_positive_vols():
     with pytest.raises(ValidationError, match="Volatilities must be positive"):
         FXVolSurface(
             valuation_date=datetime(2025, 1, 1),
-            pair="EURUSD",
+            ccy_pair="EUR/USD",
             tenors=["1Y"],
             strikes=[1.0],
             vols=[[0.0]],
@@ -129,10 +143,12 @@ def test_fx_vol_surface_rejects_non_positive_vols():
 
 
 def test_fx_vol_surface_rejects_wrong_row_count():
-    with pytest.raises(ValidationError, match="Vol grid has 1 rows but 2 tenors"):
+    with pytest.raises(
+        ValidationError, match="Vol grid has 1 rows but 2 tenors"
+    ):
         FXVolSurface(
             valuation_date=datetime(2025, 1, 1),
-            pair="EURUSD",
+            ccy_pair="EUR/USD",
             tenors=["1Y", "2Y"],
             strikes=[1.0],
             vols=[[0.10]],
@@ -146,7 +162,7 @@ def test_fx_vol_surface_rejects_wrong_col_count():
     ):
         FXVolSurface(
             valuation_date=datetime(2025, 1, 1),
-            pair="EURUSD",
+            ccy_pair="EUR/USD",
             tenors=["1Y"],
             strikes=[1.0, 1.1],
             vols=[[0.10]],
@@ -156,7 +172,7 @@ def test_fx_vol_surface_rejects_wrong_col_count():
 def test_fx_vol_surface_tenor_conversion():
     surface = FXVolSurface(
         valuation_date=datetime(2025, 1, 1),
-        pair="EURUSD",
+        ccy_pair="EUR/USD",
         tenors=["6M", "1Y"],
         strikes=[1.0],
         vols=[
@@ -173,7 +189,7 @@ def test_fx_vol_surface_tenor_conversion():
 def test_fx_vol_surface_get_vol_interpolated():
     surface = FXVolSurface(
         valuation_date=datetime(2025, 1, 1),
-        pair="EURUSD",
+        ccy_pair="EUR/USD",
         tenors=["1Y", "2Y"],
         strikes=[1.0, 2.0],
         vols=[
@@ -199,7 +215,7 @@ def market_snapshot():
         fx_spots=[
             FXSpot(
                 valuation_date=valuation_date,
-                pair="EURUSD",
+                ccy_pair="EUR/USD",
                 spot=1.10,
             )
         ],
@@ -214,7 +230,7 @@ def market_snapshot():
         fx_vol_surfaces=[
             FXVolSurface(
                 valuation_date=valuation_date,
-                pair="EURUSD",
+                ccy_pair="EUR/USD",
                 tenors=["1Y", "2Y"],
                 strikes=[1.0, 2.0],
                 vols=[
@@ -227,12 +243,12 @@ def market_snapshot():
 
 
 def test_market_snapshot_get_spot(market_snapshot):
-    assert market_snapshot.get_spot("EURUSD") == 1.10
+    assert market_snapshot.get_spot("EUR/USD") == 1.10
 
 
 def test_market_snapshot_get_spot_missing(market_snapshot):
-    with pytest.raises(ValueError, match="No spot rate for GBPUSD"):
-        market_snapshot.get_spot("GBPUSD")
+    with pytest.raises(ValueError, match="No spot rate for GBP/USD"):
+        market_snapshot.get_spot("GBP/USD")
 
 
 def test_market_snapshot_get_yield_curve(market_snapshot):
@@ -256,22 +272,22 @@ def test_market_snapshot_get_rate(market_snapshot):
 
 
 def test_market_snapshot_get_vol_surface(market_snapshot):
-    surface = market_snapshot.get_vol_surface("EURUSD")
+    surface = market_snapshot.get_vol_surface("EUR/USD")
 
-    assert surface.pair == "EURUSD"
+    assert surface.ccy_pair == "EUR/USD"
 
 
 def test_market_snapshot_get_vol_surface_missing(market_snapshot):
     with pytest.raises(
         ValueError,
-        match="No vol surface found for GBPUSD",
+        match="No vol surface found for GBP/USD",
     ):
-        market_snapshot.get_vol_surface("GBPUSD")
+        market_snapshot.get_vol_surface("GBP/USD")
 
 
 def test_market_snapshot_get_vol(market_snapshot):
     result = market_snapshot.get_vol(
-        pair="EURUSD",
+        ccy_pair="EUR/USD",
         tenor_years=1.5,
         strike=1.5,
     )

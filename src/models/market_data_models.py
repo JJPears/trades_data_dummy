@@ -1,6 +1,7 @@
 from pydantic import BaseModel, field_validator
 from datetime import datetime
 from src.common.enums import Ccy
+from src.common.constants import FX_PAIRS
 from src.common.utils import (
     parse_tenor,
     linear_interpolate,
@@ -10,7 +11,7 @@ from src.common.utils import (
 
 class FXSpot(BaseModel):
     valuation_date: datetime
-    pair: str
+    ccy_pair: str
     spot: float
 
     @field_validator("spot")
@@ -18,6 +19,13 @@ class FXSpot(BaseModel):
     def validate_spot(cls, v: float) -> float:
         if v <= 0:
             raise ValueError("Spot rate must be positive")
+        return v
+
+    @field_validator("ccy_pair")
+    @classmethod
+    def validate_ccy_pair(cls, v: str) -> str:
+        if v not in FX_PAIRS:
+            raise ValueError("FX pair not supported")
         return v
 
 
@@ -62,7 +70,7 @@ class FXVolSurface(BaseModel):
     """
 
     valuation_date: datetime
-    pair: str
+    ccy_pair: str
 
     tenors: list[str]
     strikes: list[float]
@@ -90,6 +98,13 @@ class FXVolSurface(BaseModel):
                         f"Vol grid row {i} has {len(row)} cols but {expected_cols} strikes"
                     )
 
+        return v
+
+    @field_validator("ccy_pair")
+    @classmethod
+    def validate_pair(cls, v: str) -> str:
+        if v not in FX_PAIRS:
+            raise ValueError("FX pair not supported")
         return v
 
     def _tenor_years(self) -> list[float]:
@@ -125,7 +140,7 @@ class MarketSnapshot(BaseModel):
 
     def get_spot(self, pair: str) -> float:
         """Get FX spot rate for a currency pair."""
-        spot = next((s for s in self.fx_spots if s.pair == pair), None)
+        spot = next((s for s in self.fx_spots if s.ccy_pair == pair), None)
         if not spot:
             raise ValueError(f"No spot rate for {pair}")
         return spot.spot
@@ -142,14 +157,18 @@ class MarketSnapshot(BaseModel):
         curve = self.get_yield_curve(ccy)
         return curve.get_rate(tenor_years)
 
-    def get_vol_surface(self, pair: str) -> FXVolSurface:
+    def get_vol_surface(self, ccy_pair: str) -> FXVolSurface:
         """Get volatility surface for a currency pair."""
-        surface = next((v for v in self.fx_vol_surfaces if v.pair == pair), None)
+        surface = next(
+            (v for v in self.fx_vol_surfaces if v.ccy_pair == ccy_pair), None
+        )
         if surface is None:
-            raise ValueError(f"No vol surface found for {pair}")
+            raise ValueError(f"No vol surface found for {ccy_pair}")
         return surface
 
-    def get_vol(self, pair: str, tenor_years: float, strike: float) -> float:
+    def get_vol(
+        self, ccy_pair: str, tenor_years: float, strike: float
+    ) -> float:
         """Get interpolated volatility for a currency pair, tenor, and strike."""
-        surface = self.get_vol_surface(pair)
+        surface = self.get_vol_surface(ccy_pair)
         return surface.get_vol(tenor_years, strike)
