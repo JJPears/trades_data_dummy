@@ -64,7 +64,6 @@ class FXTrade(Trade):
     value_date: datetime
 
 
-
 class TradeCollection(list):
     def to_df(self) -> pd.DataFrame:
         rows = [t.model_dump() for t in self]
@@ -74,7 +73,7 @@ class TradeCollection(list):
         return [t.model_dump() for t in self]
 
     def to_csv(self, file_path):
-        
+
         validate_csv_file_path(file_path)
 
         df = self.to_df()

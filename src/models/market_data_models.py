@@ -144,9 +144,7 @@ class MarketSnapshot(BaseModel):
 
     def get_vol_surface(self, pair: str) -> FXVolSurface:
         """Get volatility surface for a currency pair."""
-        surface = next(
-            (v for v in self.fx_vol_surfaces if v.pair == pair), None
-        )
+        surface = next((v for v in self.fx_vol_surfaces if v.pair == pair), None)
         if surface is None:
             raise ValueError(f"No vol surface found for {pair}")
         return surface

@@ -1,6 +1,7 @@
 from datetime import datetime
 from src.common.enums import ProductType
 
+
 class DummyTrade:
     def __init__(
         self,

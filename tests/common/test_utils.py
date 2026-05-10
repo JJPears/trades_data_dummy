@@ -31,7 +31,7 @@ from src.common.utils import (
     validate_csv_file_path,
     parse_tenor,
     linear_interpolate,
-    bilinear_interpolate
+    bilinear_interpolate,
 )
 
 
@@ -294,6 +294,7 @@ def test_bilinear_interpolate_outside_grid_clamps():
     )
 
     assert result == 60.0
+
 
 def test_validate_csv_file_path_valid(tmp_path):
     file_path = tmp_path / "output.csv"

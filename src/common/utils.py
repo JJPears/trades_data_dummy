@@ -59,9 +59,7 @@ def generate_day_count() -> DayCount:
     return random.choice(list(DayCount))
 
 
-def generate_rate(
-    min_val: float = RATE_MIN, max_val: float = RATE_MAX
-) -> float:
+def generate_rate(min_val: float = RATE_MIN, max_val: float = RATE_MAX) -> float:
     return random.uniform(min_val, max_val)
 
 
@@ -77,9 +75,7 @@ def generate_direction() -> Direction:
     return random.choice(list(Direction))
 
 
-def generate_strike(
-    min_val: float = STRIKE_MIN, max_val: float = STRIKE_MAX
-) -> float:
+def generate_strike(min_val: float = STRIKE_MIN, max_val: float = STRIKE_MAX) -> float:
     return random.uniform(min_val, max_val)
 
 

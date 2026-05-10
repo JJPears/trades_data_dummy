@@ -44,9 +44,7 @@ def test_yield_curve_valid():
 
 
 def test_yield_curve_rejects_deeply_negative_rates():
-    with pytest.raises(
-        ValidationError, match="Rates cannot be deeply negative"
-    ):
+    with pytest.raises(ValidationError, match="Rates cannot be deeply negative"):
         YieldCurve(
             valuation_date=datetime(2025, 1, 1),
             currency=Ccy.USD,
@@ -56,9 +54,7 @@ def test_yield_curve_rejects_deeply_negative_rates():
 
 
 def test_yield_curve_rejects_non_decimal_rates():
-    with pytest.raises(
-        ValidationError, match="Rates must be expressed as decimals"
-    ):
+    with pytest.raises(ValidationError, match="Rates must be expressed as decimals"):
         YieldCurve(
             valuation_date=datetime(2025, 1, 1),
             currency=Ccy.USD,
@@ -133,9 +129,7 @@ def test_fx_vol_surface_rejects_non_positive_vols():
 
 
 def test_fx_vol_surface_rejects_wrong_row_count():
-    with pytest.raises(
-        ValidationError, match="Vol grid has 1 rows but 2 tenors"
-    ):
+    with pytest.raises(ValidationError, match="Vol grid has 1 rows but 2 tenors"):
         FXVolSurface(
             valuation_date=datetime(2025, 1, 1),
             pair="EURUSD",
