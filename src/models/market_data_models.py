@@ -166,9 +166,7 @@ class MarketSnapshot(BaseModel):
             raise ValueError(f"No vol surface found for {ccy_pair}")
         return surface
 
-    def get_vol(
-        self, ccy_pair: str, tenor_years: float, strike: float
-    ) -> float:
+    def get_vol(self, ccy_pair: str, tenor_years: float, strike: float) -> float:
         """Get interpolated volatility for a currency pair, tenor, and strike."""
         surface = self.get_vol_surface(ccy_pair)
         return surface.get_vol(tenor_years, strike)
