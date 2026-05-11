@@ -4,11 +4,15 @@ import random
 from src.common.enums import ProductType
 from src.models.trade_models import TradeCollection
 from src.trade_service import TradeService
+from src.factories.trade_factory import TradeFactory
 from tests.utils import DummyTrade
 
 
+
+
 def test_create_trades_returns_sorted_trade_collection(monkeypatch):
-    service = TradeService()
+    factory = TradeFactory()
+    service = TradeService(factory)
 
     base_date = datetime(2024, 1, 1)
     trade_dates = [
@@ -16,28 +20,28 @@ def test_create_trades_returns_sorted_trade_collection(monkeypatch):
         base_date + timedelta(days=2),
         base_date + timedelta(days=1),
     ]
-    service.FACTORY_MAP = {
-        ProductType.BOND_FIXED: lambda: DummyTrade(
+
+    mapping = {
+        ProductType.BOND_FIXED: DummyTrade(
             product_type=ProductType.BOND_FIXED,
             trade_date=trade_dates[0],
         ),
-        ProductType.IR_SWAP: lambda: DummyTrade(
+        ProductType.IR_SWAP: DummyTrade(
             product_type=ProductType.IR_SWAP,
             trade_date=trade_dates[1],
         ),
-        ProductType.FX_OPTION: lambda: DummyTrade(
+        ProductType.FX_OPTION: DummyTrade(
             product_type=ProductType.FX_OPTION,
             trade_date=trade_dates[2],
         ),
     }
-    selected_types = [
-        ProductType.BOND_FIXED,
-        ProductType.IR_SWAP,
-        ProductType.FX_OPTION,
-    ]
 
-    sequence = iter(selected_types)
+    sequence = iter(mapping.keys())
     monkeypatch.setattr(random, "choice", lambda _: next(sequence))
+
+    monkeypatch.setattr(factory, "create", lambda pt: mapping[pt])
+
+    selected_types = list(mapping.keys())
 
     trades = service.create_trades(n=3, product_types=selected_types)
 
@@ -48,20 +52,18 @@ def test_create_trades_returns_sorted_trade_collection(monkeypatch):
 
 
 def test_create_trades_respects_product_types_argument(monkeypatch):
-    service = TradeService()
+    factory = TradeFactory()
+    service = TradeService(factory)
 
     base_date = datetime(2024, 1, 1)
 
-    service.FACTORY_MAP = {
-        ProductType.FX_SPOT: lambda: DummyTrade(
-            product_type=ProductType.FX_SPOT,
-            trade_date=base_date,
-        ),
-    }
-
-    base_date = datetime(2024, 1, 1)
+    dummy_trade = DummyTrade(
+        product_type=ProductType.FX_SPOT,
+        trade_date=base_date,
+    )
 
     monkeypatch.setattr(random, "choice", lambda _: ProductType.FX_SPOT)
+    monkeypatch.setattr(factory, "create", lambda pt: dummy_trade)
 
     trades = service.create_trades(
         n=2,
@@ -74,7 +76,8 @@ def test_create_trades_respects_product_types_argument(monkeypatch):
 
 
 def test_create_trades_with_sort_false_preserves_creation_order(monkeypatch):
-    service = TradeService()
+    factory = TradeFactory()
+    service = TradeService(factory)
 
     base_date = datetime(2024, 1, 1)
     trade_dates = [
@@ -82,28 +85,27 @@ def test_create_trades_with_sort_false_preserves_creation_order(monkeypatch):
         base_date + timedelta(days=1),
         base_date + timedelta(days=2),
     ]
-    service.FACTORY_MAP = {
-        ProductType.FX_OPTION: lambda: DummyTrade(
+
+    mapping = {
+        ProductType.FX_OPTION: DummyTrade(
             product_type=ProductType.FX_OPTION,
             trade_date=trade_dates[0],
         ),
-        ProductType.FX_SPOT: lambda: DummyTrade(
+        ProductType.FX_SPOT: DummyTrade(
             product_type=ProductType.FX_SPOT,
             trade_date=trade_dates[1],
         ),
-        ProductType.IR_SWAP: lambda: DummyTrade(
+        ProductType.IR_SWAP: DummyTrade(
             product_type=ProductType.IR_SWAP,
             trade_date=trade_dates[2],
         ),
     }
-    selected_types = [
-        ProductType.FX_OPTION,
-        ProductType.FX_SPOT,
-        ProductType.IR_SWAP,
-    ]
 
+    selected_types = list(mapping.keys())
     sequence = iter(selected_types)
+
     monkeypatch.setattr(random, "choice", lambda _: next(sequence))
+    monkeypatch.setattr(factory, "create", lambda pt: mapping[pt])
 
     trades = service.create_trades(
         n=3,

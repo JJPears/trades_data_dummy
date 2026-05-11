@@ -11,17 +11,15 @@ from src.common.enums import (
     ProductType,
     Ccy,
 )
-from src.factories.trade_factory import (
-    create_bullet_bond_trade,
-    create_fx_option_trade,
-    create_fx_spot_trade,
-    create_ir_swap_trade,
-)
+from src.factories.trade_factory import TradeFactory
 from src.models.trade_models import BulletBondTrade, FXOptionTrade, FXTrade, IRSwapTrade
 
 
+factory = TradeFactory()
+
+
 def test_create_bullet_bond_trade_returns_bulletbond():
-    trade = create_bullet_bond_trade()
+    trade = factory.create(ProductType.BOND_FIXED)
 
     assert isinstance(trade, BulletBondTrade)
     assert trade.asset_class == AssetClass.RATES
@@ -34,7 +32,7 @@ def test_create_bullet_bond_trade_returns_bulletbond():
 
 
 def test_create_ir_swap_trade_returns_irswap():
-    trade = create_ir_swap_trade()
+    trade = factory.create(ProductType.IR_SWAP)
 
     assert isinstance(trade, IRSwapTrade)
     assert trade.asset_class == AssetClass.RATES
@@ -49,7 +47,7 @@ def test_create_ir_swap_trade_returns_irswap():
 
 
 def test_create_fx_option_trade_returns_fxoption():
-    trade = create_fx_option_trade()
+    trade = factory.create(ProductType.FX_OPTION)
 
     assert isinstance(trade, FXOptionTrade)
     assert trade.asset_class == AssetClass.FX
@@ -64,7 +62,7 @@ def test_create_fx_option_trade_returns_fxoption():
 
 
 def test_create_fx_spot_trade_returns_fxspot():
-    trade = create_fx_spot_trade()
+    trade = factory.create(ProductType.FX_SPOT)
 
     assert isinstance(trade, FXTrade)
     assert trade.asset_class == AssetClass.FX
