@@ -78,11 +78,7 @@ class MarketDataFactory:
             spot.valuation_date = self.valuation_date
             base_ccy, quote_ccy = spot.ccy_pair.split("/")
 
-            move = (
-                ccy_shock[Ccy(base_ccy)]
-                - ccy_shock[Ccy(quote_ccy)]
-                + global_shock
-            )
+            move = ccy_shock[Ccy(base_ccy)] - ccy_shock[Ccy(quote_ccy)] + global_shock
 
             # TODO fix so this can't go negative
             spot.spot *= 1.0 + move
@@ -141,9 +137,7 @@ class MarketDataFactory:
                         vol_noise * 0.25,
                     )
                     total_move = (
-                        vol_regime_shift
-                        + idiosyncratic_noise
-                        + 0.01 * global_shock
+                        vol_regime_shift + idiosyncratic_noise + 0.01 * global_shock
                     )
 
                     adjusted_vol = vol * (1.0 + total_move)
