@@ -35,6 +35,9 @@ class YieldCurve(BaseModel):
 
     Zero coupon rates for different tenors (tenors in the format of "1M", "3M", "1Y"...)
     Rates are in decimal form.
+
+    TODO expland to have a curve type - currently we can only categorise by generic yield curve per currency
+    should have zero curve, swap curve, bond curve, maybe credit curve
     """
 
     valuation_date: datetime
