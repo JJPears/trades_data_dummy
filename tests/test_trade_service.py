@@ -8,8 +8,6 @@ from src.factories.trade_factory import TradeFactory
 from tests.utils import DummyTrade
 
 
-
-
 def test_create_trades_returns_sorted_trade_collection(monkeypatch):
     factory = TradeFactory()
     service = TradeService(factory)
