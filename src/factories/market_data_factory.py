@@ -1,5 +1,5 @@
 import random
-from datetime import datetime, timezone
+from datetime import datetime
 from copy import deepcopy
 
 from src.models.market_data_models import (
@@ -9,9 +9,6 @@ from src.models.market_data_models import (
     FXVolSurface,
 )
 from src.common.enums import Ccy
-
-
-# TODO I think actually have a base set of classes held in state of my object and then manipulate those with noise
 
 
 class MarketDataFactory:
@@ -149,22 +146,22 @@ class MarketDataFactory:
             surface.vols = adjusted_grid
 
 
-def generate_base_market_snapshot() -> MarketSnapshot:
+def generate_base_market_snapshot(valuation_date: datetime) -> MarketSnapshot:
     """
     Method to generate a simple market snapshot that can be used as input for our factory.
     """
     base_snapshot = MarketSnapshot(
-        valuation_date=datetime.now(timezone.utc),
+        valuation_date=valuation_date,
         fx_spots=[
             FXSpot(
-                valuation_date=datetime.now(timezone.utc),
+                valuation_date=valuation_date,
                 ccy_pair="EUR/USD",
                 spot=1.10,
             ),
         ],
         yield_curves=[
             YieldCurve(
-                valuation_date=datetime.now(timezone.utc),
+                valuation_date=valuation_date,
                 currency=Ccy.USD,
                 tenors=["1M", "3M", "6M", "1Y", "2Y", "5Y", "10Y"],
                 rates=[0.045, 0.046, 0.047, 0.048, 0.049, 0.050, 0.051],
@@ -172,7 +169,7 @@ def generate_base_market_snapshot() -> MarketSnapshot:
         ],
         fx_vol_surfaces=[
             FXVolSurface(
-                valuation_date=datetime.now(timezone.utc),
+                valuation_date=valuation_date,
                 ccy_pair="EUR/USD",
                 tenors=["1M", "3M", "6M", "1Y"],
                 strikes=[0.9, 1.0, 1.1],

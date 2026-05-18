@@ -5,17 +5,16 @@ from src.factories.market_data_factory import (
     MarketDataFactory,
     generate_base_market_snapshot,
 )
-from src.common.enums import Ccy
-
-
-@pytest.fixture
-def base_snapshot():
-    return generate_base_market_snapshot()
 
 
 @pytest.fixture
 def valuation_date():
     return datetime(2025, 1, 1, tzinfo=timezone.utc)
+
+
+@pytest.fixture
+def base_snapshot(valuation_date):
+    return generate_base_market_snapshot(valuation_date)
 
 
 def test_factory_determinism(base_snapshot, valuation_date):
