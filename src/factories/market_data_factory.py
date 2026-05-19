@@ -147,24 +147,38 @@ class MarketDataFactory:
 
 
 def generate_base_market_snapshot(valuation_date: datetime) -> MarketSnapshot:
-    """
-    Method to generate a simple market snapshot that can be used as input for our factory.
-    """
-    base_snapshot = MarketSnapshot(
+    return MarketSnapshot(
         valuation_date=valuation_date,
         fx_spots=[
-            FXSpot(
-                valuation_date=valuation_date,
-                ccy_pair="EUR/USD",
-                spot=1.10,
-            ),
+            FXSpot(valuation_date=valuation_date, ccy_pair="EUR/USD", spot=1.08),
+            FXSpot(valuation_date=valuation_date, ccy_pair="GBP/USD", spot=1.27),
+            FXSpot(valuation_date=valuation_date, ccy_pair="USD/JPY", spot=149.50),
+            FXSpot(valuation_date=valuation_date, ccy_pair="EUR/GBP", spot=0.85),
         ],
         yield_curves=[
             YieldCurve(
                 valuation_date=valuation_date,
                 currency=Ccy.USD,
-                tenors=["1M", "3M", "6M", "1Y", "2Y", "5Y", "10Y"],
-                rates=[0.045, 0.046, 0.047, 0.048, 0.049, 0.050, 0.051],
+                tenors=["1M", "3M", "6M", "1Y", "2Y", "5Y", "10Y", "30Y"],
+                rates=[0.053, 0.054, 0.054, 0.052, 0.049, 0.047, 0.046, 0.045],
+            ),
+            YieldCurve(
+                valuation_date=valuation_date,
+                currency=Ccy.EUR,
+                tenors=["1M", "3M", "6M", "1Y", "2Y", "5Y", "10Y", "30Y"],
+                rates=[0.039, 0.039, 0.038, 0.037, 0.034, 0.032, 0.031, 0.030],
+            ),
+            YieldCurve(
+                valuation_date=valuation_date,
+                currency=Ccy.GBP,
+                tenors=["1M", "3M", "6M", "1Y", "2Y", "5Y", "10Y", "30Y"],
+                rates=[0.052, 0.052, 0.051, 0.050, 0.047, 0.044, 0.043, 0.045],
+            ),
+            YieldCurve(
+                valuation_date=valuation_date,
+                currency=Ccy.JPY,
+                tenors=["1M", "3M", "6M", "1Y", "2Y", "5Y", "10Y", "30Y"],
+                rates=[0.001, 0.001, 0.002, 0.003, 0.004, 0.006, 0.010, 0.015],
             ),
         ],
         fx_vol_surfaces=[
@@ -172,14 +186,49 @@ def generate_base_market_snapshot(valuation_date: datetime) -> MarketSnapshot:
                 valuation_date=valuation_date,
                 ccy_pair="EUR/USD",
                 tenors=["1M", "3M", "6M", "1Y"],
-                strikes=[0.9, 1.0, 1.1],
+                strikes=[0.95, 1.00, 1.05],
                 vols=[
-                    [0.11, 0.10, 0.11],
-                    [0.105, 0.095, 0.105],
-                    [0.10, 0.09, 0.10],
-                    [0.095, 0.085, 0.095],
+                    [0.075, 0.068, 0.074],
+                    [0.073, 0.066, 0.072],
+                    [0.071, 0.064, 0.070],
+                    [0.069, 0.062, 0.068],
                 ],
-            )
+            ),
+            FXVolSurface(
+                valuation_date=valuation_date,
+                ccy_pair="GBP/USD",
+                tenors=["1M", "3M", "6M", "1Y"],
+                strikes=[1.15, 1.20, 1.25],
+                vols=[
+                    [0.085, 0.078, 0.084],
+                    [0.083, 0.076, 0.082],
+                    [0.081, 0.074, 0.080],
+                    [0.079, 0.072, 0.078],
+                ],
+            ),
+            FXVolSurface(
+                valuation_date=valuation_date,
+                ccy_pair="USD/JPY",
+                tenors=["1M", "3M", "6M", "1Y"],
+                strikes=[145.0, 150.0, 155.0],
+                vols=[
+                    [0.095, 0.088, 0.092],
+                    [0.092, 0.085, 0.089],
+                    [0.089, 0.082, 0.086],
+                    [0.086, 0.079, 0.083],
+                ],
+            ),
+            FXVolSurface(
+                valuation_date=valuation_date,
+                ccy_pair="EUR/GBP",
+                tenors=["1M", "3M", "6M", "1Y"],
+                strikes=[0.82, 0.85, 0.88],
+                vols=[
+                    [0.065, 0.058, 0.064],
+                    [0.063, 0.056, 0.062],
+                    [0.061, 0.054, 0.060],
+                    [0.059, 0.052, 0.058],
+                ],
+            ),
         ],
     )
-    return base_snapshot
